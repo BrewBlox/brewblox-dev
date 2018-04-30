@@ -22,9 +22,9 @@ setup(
     setup_requires=['setuptools_scm'],
     entry_points={
         'console_scripts': [
-            'brewblox_distcopy = brewblox_tools.distcopy:main',
-            'brewblox_bump = brewblox_tools.bump:main',
-            'brewblox_deploy_docker = brewblox_tools.deploy_docker:main',
+            'bbt-distcopy = brewblox_tools.distcopy:main',
+            'bbt-bump = brewblox_tools.bump:main',
+            'bbt-deploy-docker = brewblox_tools.deploy_docker:main',
         ]
     }
 )
