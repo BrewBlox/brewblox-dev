@@ -1,2 +1,5 @@
 # brewblox-tools
-Single-file executable scripts
+
+Simple utility scripts.
+
+Each script defines a python main.
