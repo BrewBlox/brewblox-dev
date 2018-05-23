@@ -43,7 +43,7 @@ def build(client, args):
             output = next(generator).rstrip()
             json_output = json.loads(output)
             if 'stream' in json_output:
-                print(json_output['stream'].rstrip())
+                print(json_output['stream'].rstrip(), flush=True)
         except StopIteration:
             print('Docker image build complete.')
             break
@@ -66,7 +66,7 @@ def push(client, args):
             output = line.rstrip()
             json_output = json.loads(output)
             msg = ' '.join([str(v) for v in json_output.values()])
-            print(msg)
+            print(msg, flush=True)
 
 
 def main(sys_args: list=None):
