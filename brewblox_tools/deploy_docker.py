@@ -13,7 +13,8 @@ def parse_args(sys_args: list=None):
     argparser = argparse.ArgumentParser()
     argparser.add_argument('-u', '--user', help='Docker Hub user name')
     argparser.add_argument('-p', '--password', help='Docker Hub password')
-    argparser.add_argument('-i', '--image', help='Dockerfile target dir. [%(default)s]', default='./docker')
+    argparser.add_argument('-f', '--file', help='Dockerfile to be built. [%(default)s]', default='Dockerfile')
+    argparser.add_argument('-i', '--image', help='Dockerfile target dir. [%(default)s]', default='.')
     argparser.add_argument('-n', '--name', help='Image base name', required=True)
     argparser.add_argument('-t', '--tags', nargs='+', help='Tags to use when pushing image. ', default=[])
     argparser.add_argument('--no-cache', help='Don\'t use cache when building', action='store_true')
@@ -34,6 +35,7 @@ def build(client, args):
 
     generator = client.build(
         path=args.image,
+        dockerfile=args.file,
         tag=tag_name,
         rm=True,
         nocache=args.no_cache)

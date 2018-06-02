@@ -66,6 +66,7 @@ def test_build(client_mock):
     deploy_docker.main('-n repo-name -i dir-name'.split())
     client_mock.build.assert_called_once_with(
         path='dir-name',
+        dockerfile='Dockerfile',
         tag='repo-name:temp',
         rm=True,
         nocache=False
