@@ -5,6 +5,7 @@ Tests deploy_docker.py
 from unittest.mock import call
 
 import pytest
+
 from brewblox_tools import deploy_docker
 
 TESTED = deploy_docker.__name__
@@ -57,11 +58,6 @@ def client_mock(mocker):
     return m
 
 
-def test_login(client_mock):
-    deploy_docker.main('-u user -p password -n name'.split())
-    client_mock.login.assert_called_once_with(username='user', password='password')
-
-
 def test_build(client_mock):
     deploy_docker.main('-n repo-name -i dir-name'.split())
     client_mock.build.assert_called_once_with(
@@ -73,7 +69,7 @@ def test_build(client_mock):
     )
 
 
-def test_push(client_mock):
+def test_deploy(client_mock):
     deploy_docker.main('-n repo-name -t humpty dumpty'.split())
     client_mock.tag.assert_has_calls([
         call('repo-name:temp', repository='repo-name', tag='humpty'),
@@ -84,3 +80,13 @@ def test_push(client_mock):
         call(repository='repo-name', tag='humpty', stream=True),
         call(repository='repo-name', tag='dumpty', stream=True),
     ])
+
+
+def test_no_push(client_mock):
+    deploy_docker.main('-n repo-name -t humpty dumpty --no-push'.split())
+    client_mock.tag.assert_has_calls([
+        call('repo-name:temp', repository='repo-name', tag='humpty'),
+        call('repo-name:temp', repository='repo-name', tag='dumpty'),
+    ])
+
+    assert client_mock.push.call_count == 0

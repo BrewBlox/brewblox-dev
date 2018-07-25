@@ -1,10 +1,9 @@
-from setuptools import setup, find_packages
-
+from setuptools import find_packages, setup
 
 setup(
     name='brewblox-tools',
     use_scm_version={'local_scheme': lambda v: ''},
-    url='https://github.com/BrewBlox/brewblox-service',
+    url='https://github.com/BrewBlox/brewblox-tools',
     author='BrewPi',
     author_email='development@brewpi.com',
     classifiers=[
@@ -25,6 +24,7 @@ setup(
             'bbt-distcopy = brewblox_tools.distcopy:main',
             'bbt-bump = brewblox_tools.bump:main',
             'bbt-deploy-docker = brewblox_tools.deploy_docker:main',
+            'bbt-localbuild = brewblox_tools.localbuild:main',
         ]
     }
 )
