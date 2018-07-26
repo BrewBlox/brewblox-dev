@@ -6,7 +6,7 @@ install:
   - pip install pipenv
   - pipenv install --dev
 
-script: echo "repo=${GITHUB_REPO}"; pytest
+script: pytest
 
 deploy:
   # Deploy to PyPi on any push to an upstream branch
