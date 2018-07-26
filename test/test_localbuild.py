@@ -11,12 +11,22 @@ TESTED = localbuild.__name__
 
 @pytest.fixture
 def getenv_mock(mocker):
-    return mocker.patch(TESTED + '.getenv')
+    return mocker.patch(TESTED + '.getenv_')
+
+
+@pytest.fixture
+def glob_mock(mocker):
+    return mocker.patch(TESTED + '.glob_')
+
+
+@pytest.fixture
+def remove_mock(mocker):
+    return mocker.patch(TESTED + '.remove_')
 
 
 @pytest.fixture
 def check_output_mock(mocker):
-    return mocker.patch(TESTED + '.check_output')
+    return mocker.patch(TESTED + '.check_output_')
 
 
 @pytest.fixture
@@ -29,7 +39,13 @@ def deploy_docker_mock(mocker):
     return mocker.patch(TESTED + '.deploy_docker.main')
 
 
-def test_localbuild(getenv_mock, check_output_mock, distcopy_mock, deploy_docker_mock):
+def test_localbuild(getenv_mock,
+                    check_output_mock,
+                    distcopy_mock,
+                    deploy_docker_mock,
+                    glob_mock,
+                    remove_mock
+                    ):
     getenv_mock.side_effect = [
         '_name',
         '_context',
@@ -37,9 +53,15 @@ def test_localbuild(getenv_mock, check_output_mock, distcopy_mock, deploy_docker
     ]
     check_output_mock.side_effect = [
         b'_branch\n',
-        b'_OUTPUT STUFF'
+        b'_OUTPUT STUFF',
     ]
+    glob_mock.side_effect = [
+        'f1',
+        'f2'
+    ]
+
     localbuild.main()
+    assert remove_mock.call_count == 2
     assert distcopy_mock.call_count == 2
     assert deploy_docker_mock.call_count == 1
 
