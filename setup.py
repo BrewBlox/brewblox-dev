@@ -17,7 +17,6 @@ setup(
         'docker',
     ],
     python_requires='>=3.6',
-    extras_require={'dev': ['tox']},
     setup_requires=['setuptools_scm'],
     entry_points={
         'console_scripts': [

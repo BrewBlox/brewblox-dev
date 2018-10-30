@@ -9,7 +9,7 @@ import docker
 TEMP_TAG = 'temp'
 
 
-def parse_args(sys_args: list=None):
+def parse_args(sys_args: list = None):
     argparser = argparse.ArgumentParser()
     argparser.add_argument('-f', '--file', help='Dockerfile to be built. [%(default)s]', default='Dockerfile')
     argparser.add_argument('-c', '--context', help='Docker build context directory. [%(default)s]', default='.')
@@ -68,7 +68,7 @@ def deploy(client, args):
             print(msg, flush=True)
 
 
-def main(sys_args: list=None):
+def main(sys_args: list = None):
     args = parse_args(sys_args)
     print(args)
     docker_client = docker.APIClient()

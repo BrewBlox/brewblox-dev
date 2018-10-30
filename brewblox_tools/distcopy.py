@@ -1,20 +1,20 @@
 #! /usr/bin/python3
 
 import argparse
-import pathlib
-import os
 import glob
+import os
+import pathlib
 import shutil
 
 
-def parse_args(sys_args: list=None):
+def parse_args(sys_args: list = None):
     argparser = argparse.ArgumentParser()
     argparser.add_argument('source', help='Source directory')
     argparser.add_argument('destinations', nargs='+', help='Destination directories.')
     return argparser.parse_args(sys_args)
 
 
-def main(sys_args: list=None):
+def main(sys_args: list = None):
     args = parse_args(sys_args)
     print(args)
 
