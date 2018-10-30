@@ -3,6 +3,7 @@ Tests bump.py
 """
 
 import pytest
+
 from brewblox_tools import bump
 
 TESTED = bump.__name__

@@ -5,6 +5,7 @@ Tests dist_copy.py
 from unittest.mock import call
 
 import pytest
+
 from brewblox_tools import distcopy
 
 TESTED = distcopy.__name__

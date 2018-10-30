@@ -6,7 +6,7 @@ from distutils.version import StrictVersion
 from subprocess import check_output
 
 
-def parse_args(sys_args: list=None):
+def parse_args(sys_args: list = None):
     argparser = argparse.ArgumentParser()
     argparser.add_argument('bump_type',
                            help='Component of the version number to increment.',
@@ -33,7 +33,7 @@ def bump(current_version: str, bump_type: str) -> str:
     }[bump_type]()
 
 
-def main(sys_args: list=None):
+def main(sys_args: list = None):
     args = parse_args(sys_args)
 
     # Get all version-formatted tags, but use the latest
