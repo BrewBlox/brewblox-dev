@@ -9,14 +9,14 @@ setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: GNU General Public License (GPL)',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
     keywords='brewblox devops',
     packages=find_packages(exclude=['test']),
     install_requires=[
         'docker',
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     setup_requires=['setuptools_scm'],
     entry_points={
         'console_scripts': [
