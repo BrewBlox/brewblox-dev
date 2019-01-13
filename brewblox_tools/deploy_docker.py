@@ -70,6 +70,7 @@ def deploy(client, args):
 
 def main(sys_args: list = None):
     args = parse_args(sys_args)
+    print('+'*20, 'Deploy Docker Image', '+'*20)
     print(args)
     docker_client = docker.APIClient()
 
