@@ -31,6 +31,13 @@ def main():
     sdist_result = check_output_('python setup.py sdist'.split()).decode()
     print(sdist_result)
 
+    try:
+        requirements = check_output_('pipenv lock --requirements'.split()).decode()
+        with open(f'{context}/requirements.txt', 'w') as f:
+            f.write(requirements)
+    except Exception as ex:  # pragma: no cover
+        print('Failed to copy Pipenv requirements: ', ex)
+
     distcopy.main('dist/ docker/dist/'.split())
     distcopy.main('config/ docker/config/'.split())
     deploy_docker.main([
