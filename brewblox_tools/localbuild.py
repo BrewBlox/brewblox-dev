@@ -6,6 +6,8 @@ from os import getenv as getenv_
 from os import remove as remove_
 from subprocess import check_output as check_output_
 
+from dotenv import load_dotenv
+
 from brewblox_tools import deploy_docker, distcopy
 
 # Import various OS libraries as special name, to allow mocking them in unit tests
@@ -13,8 +15,9 @@ from brewblox_tools import deploy_docker, distcopy
 
 
 def main():
-    name = getenv_('DOCKER_REPO')
+    load_dotenv(verbose=True)
 
+    name = getenv_('DOCKER_REPO')
     if not name:
         raise KeyError('Environment variable $DOCKER_REPO not found')
 
@@ -27,6 +30,13 @@ def main():
 
     sdist_result = check_output_('python setup.py sdist'.split()).decode()
     print(sdist_result)
+
+    try:
+        requirements = check_output_('pipenv lock --requirements'.split()).decode()
+        with open(f'{context}/requirements.txt', 'w') as f:
+            f.write(requirements)
+    except Exception as ex:  # pragma: no cover
+        print('Failed to copy Pipenv requirements: ', ex)
 
     distcopy.main('dist/ docker/dist/'.split())
     distcopy.main('config/ docker/config/'.split())

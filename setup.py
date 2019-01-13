@@ -15,6 +15,7 @@ setup(
     packages=find_packages(exclude=['test']),
     install_requires=[
         'docker',
+        'python-dotenv',
     ],
     python_requires='>=3.7',
     setup_requires=['setuptools_scm'],
