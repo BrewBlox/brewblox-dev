@@ -6,16 +6,15 @@ from os import getenv as getenv_
 from os import remove as remove_
 from subprocess import check_output as check_output_
 
-from dotenv import load_dotenv
-
 from brewblox_tools import deploy_docker, distcopy
+from dotenv import find_dotenv, load_dotenv
 
 # Import various OS libraries as special name, to allow mocking them in unit tests
 # Otherwise, pytest will break as it starts using mocked functions
 
 
 def main():
-    load_dotenv(verbose=True)
+    load_dotenv(find_dotenv(usecwd=True))
 
     name = getenv_('DOCKER_REPO')
     if not name:
