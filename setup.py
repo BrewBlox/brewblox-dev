@@ -7,8 +7,9 @@ setup(
     author='BrewPi',
     author_email='development@brewpi.com',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'License :: OSI Approved :: GNU General Public License (GPL)',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
     keywords='brewblox devops',
@@ -17,7 +18,7 @@ setup(
         'docker',
         'python-dotenv',
     ],
-    python_requires='>=3.7',
+    python_requires='>=3.6',
     setup_requires=['setuptools_scm'],
     entry_points={
         'console_scripts': [
