@@ -3,7 +3,7 @@
 import argparse
 from distutils.util import strtobool
 from distutils.version import StrictVersion
-from subprocess import check_output
+from subprocess import STDOUT, check_call, check_output
 
 
 def parse_args(sys_args: list = None):
@@ -54,6 +54,10 @@ def main(sys_args: list = None):
 
     else:
         print('Aborted. No tags were added!')
+        return
+
+    if user_yes_no_query('Do you want to push this tag?'):
+        check_call('git push --tags', shell=True, stderr=STDOUT)
 
 
 if __name__ == '__main__':
