@@ -1,48 +1,111 @@
 #! /usr/bin/python3
 
 
-from glob import glob as glob_
-from os import getenv as getenv_
-from os import remove as remove_
-from subprocess import check_output as check_output_
+import argparse
+import re
+from glob import glob
+from os import getenv, remove
+from subprocess import STDOUT, check_call, check_output
 
-from brewblox_tools import deploy_docker, distcopy
 from dotenv import find_dotenv, load_dotenv
+
+from brewblox_tools import distcopy
 
 # Import various OS libraries as special name, to allow mocking them in unit tests
 # Otherwise, pytest will break as it starts using mocked functions
 
 
-def main():
+def parse_args(sys_args: list = None):
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('-a', '--arch',
+                        help='Build these architectures. [%(default)s]',
+                        default=['amd'],
+                        nargs='+',
+                        choices=['amd', 'arm'])
+    parser.add_argument('-r', '--repo',
+                        help='Docker repository name. [%(default)s]',
+                        default=getenv('DOCKER_REPO'))
+    parser.add_argument('-c', '--context',
+                        help='Build context. [%(default)s]',
+                        default='docker')
+    parser.add_argument('-f', '--file',
+                        help='Filename inside context. [%(default)s]',
+                        default='Dockerfile')
+    parser.add_argument('-t', '--tags',
+                        help='Additional tags. The "local" tag is always built.',
+                        nargs='+',
+                        default=[])
+    parser.add_argument('--branch-tag',
+                        help='Use sanitized branch name as tag. ' +
+                        'ARM automatically gets the "rpi-" prefix. [%(default)s]',
+                        action='store_true')
+    parser.add_argument('--pull',
+                        help='Pull base images. [%(default)s]',
+                        action='store_true')
+    parser.add_argument('--push',
+                        help='Push all tags except "local" to Docker Hub. [%(default)s]',
+                        action='store_true')
+
+    return parser.parse_args(sys_args)
+
+
+def run(cmd: str):
+    print(cmd)
+    check_call(cmd, shell=True, stderr=STDOUT)
+
+
+def main(sys_args: list = None):
     load_dotenv(find_dotenv(usecwd=True))
+    args = parse_args(sys_args)
+    tags = args.tags.copy()
 
-    name = getenv_('DOCKER_REPO')
-    if not name:
-        raise KeyError('Environment variable $DOCKER_REPO not found')
+    if args.branch_tag:
+        tags.append(getenv('TRAVIS_BRANCH')
+                    or check_output('git rev-parse --abbrev-ref HEAD'.split()).decode().rstrip())
 
-    context = getenv_('DOCKER_CONTEXT', 'docker')
-    file = getenv_('DOCKER_FILE', 'amd/Dockerfile')
-    branch = check_output_('git rev-parse --abbrev-ref HEAD'.split()).decode().rstrip()
+    tags = [re.sub('[/_:]', '-', tag) for tag in tags]
 
-    for f in glob_('dist/*'):
-        remove_(f)
+    for f in glob('dist/*'):
+        remove(f)
 
-    sdist_result = check_output_('python setup.py sdist'.split()).decode()
-    print(sdist_result)
+    run('python setup.py sdist')
+    run(f'pipenv lock --requirements > {args.context}/requirements.txt')
+    distcopy.main(f'dist/ {args.context}/dist/'.split())
+    distcopy.main(f'config/ {args.context}/config/'.split())
 
-    try:
-        requirements = check_output_('pipenv lock --requirements'.split()).decode()
-        with open(f'{context}/requirements.txt', 'w') as f:
-            f.write(requirements)
-    except Exception as ex:  # pragma: no cover
-        print('Failed to copy Pipenv requirements: ', ex)
+    for arch in args.arch:
+        prefix = ''
+        commands = []
+        build_args = []
+        build_tags = [
+            'local',
+            *tags
+        ]
 
-    distcopy.main('dist/ docker/dist/'.split())
-    distcopy.main('config/ docker/config/'.split())
-    deploy_docker.main([
-        '--context', context,
-        '--file', file,
-        '--name', name,
-        '--tags', branch,
-        '--no-push'
-    ])
+        if arch == 'arm':
+            prefix = 'rpi-'
+            commands += [
+                'docker run --rm --privileged multiarch/qemu-user-static:register --reset',
+            ]
+
+        if args.pull:
+            build_args.append('--pull')
+
+        build_args += [
+            '--no-cache',
+            ' '.join([f'--tag {args.repo}:{prefix}{t}' for t in build_tags]),
+            f'--file {args.context}/{arch}/{args.file}',
+            args.context,
+        ]
+
+        commands.append(f'docker build {" ".join(build_args)}')
+        run(' && '.join(commands))
+
+        if args.push:
+            # We're skipping the local tag
+            [run(f'docker push {args.repo}:{prefix}{t}') for t in tags]
+
+
+if __name__ == '__main__':
+    main()

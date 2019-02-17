@@ -16,7 +16,7 @@ def parse_args(sys_args: list = None):
 
 def main(sys_args: list = None):
     args = parse_args(sys_args)
-    print(args)
+    print(vars(args))
 
     for dest in args.destinations:
         pathlib.Path(dest).mkdir(parents=True, exist_ok=True)
