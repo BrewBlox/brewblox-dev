@@ -74,7 +74,8 @@ def test_bump_nok(check_output_mock, input_mock):
     (['y', 'n'], True),
     (['n', 'y'], False),
     (['maybe', 'y'], True),
-    (['maybe', 'I think so...', 'n'], False)
+    (['maybe', 'I think so...', 'n'], False),
+    ([''], True),
 ])
 def test_user_yes_no_query(input_mock, user_input, expected):
     input_mock.side_effect = user_input

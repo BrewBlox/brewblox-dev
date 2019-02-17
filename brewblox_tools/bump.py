@@ -15,10 +15,10 @@ def parse_args(sys_args: list = None):
 
 
 def user_yes_no_query(question: str) -> bool:
-    print(f'{question} [y/n]')
+    print(f'{question} [Y/n]')
     while True:
         try:
-            return strtobool(input().lower())
+            return strtobool(input().lower() or 'yes')
         except ValueError:
             print('Please respond with \'y\' or \'n\'.')
 
