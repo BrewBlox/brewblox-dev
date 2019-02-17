@@ -35,6 +35,7 @@ def bump(current_version: str, bump_type: str) -> str:
 
 def main(sys_args: list = None):
     args = parse_args(sys_args)
+    print(vars(args))
 
     # Get all version-formatted tags, but use the latest
     current_version = check_output(

@@ -55,9 +55,9 @@ def run(cmd: str):
     check_call(cmd, shell=True, stderr=STDOUT)
 
 
-def main():
+def main(sys_args: list = None):
     load_dotenv(find_dotenv(usecwd=True))
-    args = parse_args()
+    args = parse_args(sys_args)
     tags = args.tags.copy()
 
     if args.branch_tag:
@@ -89,15 +89,15 @@ def main():
                 'docker run --rm --privileged multiarch/qemu-user-static:register --reset',
             ]
 
+        if args.pull:
+            build_args.append('--pull')
+
         build_args += [
             '--no-cache',
             ' '.join([f'--tag {args.repo}:{prefix}{t}' for t in build_tags]),
             f'--file {args.context}/{arch}/{args.file}',
             args.context,
         ]
-
-        if args.pull:
-            build_args.append('--pull')
 
         commands.append(f'docker build {" ".join(build_args)}')
         run(' && '.join(commands))

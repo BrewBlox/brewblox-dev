@@ -2,7 +2,8 @@
 Tests localbuild.py
 """
 
-from unittest.mock import mock_open
+from subprocess import STDOUT
+from unittest.mock import call
 
 import pytest
 
@@ -12,28 +13,17 @@ TESTED = localbuild.__name__
 
 
 @pytest.fixture
-def open_mock(mocker):
-    return mocker.patch('builtins.open', mock_open())
-
-
-@pytest.fixture
-def getenv_mock(mocker):
-    return mocker.patch(TESTED + '.getenv_')
-
-
-@pytest.fixture
-def glob_mock(mocker):
-    return mocker.patch(TESTED + '.glob_')
-
-
-@pytest.fixture
-def remove_mock(mocker):
-    return mocker.patch(TESTED + '.remove_')
-
-
-@pytest.fixture
-def check_output_mock(mocker):
-    return mocker.patch(TESTED + '.check_output_')
+def mocked_utils(mocker):
+    mocked = [
+        'glob',
+        'getenv',
+        'remove',
+        'check_call',
+        'check_output',
+        'find_dotenv',
+        'load_dotenv',
+    ]
+    return {k: mocker.patch(TESTED + '.' + k) for k in mocked}
 
 
 @pytest.fixture
@@ -42,41 +32,79 @@ def distcopy_mock(mocker):
 
 
 @pytest.fixture
-def deploy_docker_mock(mocker):
-    return mocker.patch(TESTED + '.deploy_docker.main')
+def run_mock(mocker):
+    return mocker.patch(TESTED + '.run')
 
 
-def test_localbuild(getenv_mock,
-                    check_output_mock,
-                    distcopy_mock,
-                    deploy_docker_mock,
-                    glob_mock,
-                    remove_mock,
-                    open_mock,
-                    ):
-    getenv_mock.side_effect = [
-        '_name',
-        '_context',
-        '_file',
-    ]
-    check_output_mock.side_effect = [
-        b'_requirements',
-        b'_branch\n',
-        b'_OUTPUT STUFF',
-    ]
-    glob_mock.side_effect = [
-        'f1',
-        'f2'
+def test_run(mocked_utils):
+    localbuild.run('test test one two')
+    mocked_utils['check_call'].assert_called_once_with(
+        'test test one two', shell=True, stderr=STDOUT
+    )
+
+
+def test_localbuild_simple(mocked_utils, distcopy_mock, run_mock):
+    mocked_utils['glob'].return_value = ['f1', 'f2']
+    mocked_utils['getenv'].side_effect = [
+        'bb-repo',
     ]
 
-    localbuild.main()
-    assert remove_mock.call_count == 2
-    open_mock.assert_called_once_with('_context/requirements.txt', 'w')
-    assert distcopy_mock.call_count == 2
-    assert deploy_docker_mock.call_count == 1
+    localbuild.main([])
+
+    assert distcopy_mock.call_args_list == [
+        call('dist/ docker/dist/'.split()),
+        call('config/ docker/config/'.split()),
+    ]
+    assert mocked_utils['remove'].call_args_list == [
+        call('f1'),
+        call('f2'),
+    ]
+    assert run_mock.call_args_list == [
+        call('python setup.py sdist'),
+        call('pipenv lock --requirements > docker/requirements.txt'),
+        call('docker build --no-cache --tag bb-repo:local --file docker/amd/Dockerfile docker')
+    ]
 
 
-def test_name_error(getenv_mock):
-    getenv_mock.return_value = None
-    with pytest.raises(KeyError):
-        localbuild.main()
+def test_localbuild_all(mocked_utils, distcopy_mock, run_mock):
+    mocked_utils['glob'].return_value = ['f1', 'f2']
+    mocked_utils['getenv'].side_effect = [
+        'bb-repo',
+        'feature/funky_branch',
+    ]
+
+    localbuild.main(['--arch', 'amd', 'arm',
+                     '--tags', 'test:tag',
+                     '--push',
+                     '--branch-tag',
+                     '--pull',
+                     '--context', 'dk',
+                     '--file', 'df',
+                     ])
+
+    assert distcopy_mock.call_args_list == [
+        call('dist/ dk/dist/'.split()),
+        call('config/ dk/config/'.split()),
+    ]
+    assert run_mock.call_args_list == [
+        call('python setup.py sdist'),
+        call('pipenv lock --requirements > dk/requirements.txt'),
+        call('docker build --pull --no-cache ' +
+             '--tag bb-repo:local ' +
+             '--tag bb-repo:test-tag ' +
+             '--tag bb-repo:feature-funky-branch ' +
+             '--file dk/amd/df ' +
+             'dk'),
+        call('docker push bb-repo:test-tag'),
+        call('docker push bb-repo:feature-funky-branch'),
+        call('docker run --rm --privileged multiarch/qemu-user-static:register --reset ' +
+             '&& ' +
+             'docker build --pull --no-cache ' +
+             '--tag bb-repo:rpi-local ' +
+             '--tag bb-repo:rpi-test-tag ' +
+             '--tag bb-repo:rpi-feature-funky-branch ' +
+             '--file dk/arm/df ' +
+             'dk'),
+        call('docker push bb-repo:rpi-test-tag'),
+        call('docker push bb-repo:rpi-feature-funky-branch'),
+    ]
