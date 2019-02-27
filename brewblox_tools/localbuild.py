@@ -61,7 +61,8 @@ def main(sys_args: list = None):
     tags = args.tags.copy()
 
     if args.branch_tag:
-        tags.append(getenv('TRAVIS_BRANCH')
+        tags.append(getenv('TRAVIS_BRANCH')  # Travis
+                    or getenv('Build.SourceBranchName')  # Azure Pipelines
                     or check_output('git rev-parse --abbrev-ref HEAD'.split()).decode().rstrip())
 
     tags = [re.sub('[/_:]', '-', tag) for tag in tags]
