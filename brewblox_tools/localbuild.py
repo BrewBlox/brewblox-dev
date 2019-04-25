@@ -94,6 +94,7 @@ def main(sys_args: list = None):
             build_args.append('--pull')
 
         build_args += [
+            '--build-arg service_info="$(git describe) @ $(date)"',
             '--no-cache',
             ' '.join([f'--tag {args.repo}:{prefix}{t}' for t in build_tags]),
             f'--file {args.context}/{arch}/{args.file}',

@@ -62,7 +62,9 @@ def test_localbuild_simple(mocked_utils, distcopy_mock, run_mock):
     assert run_mock.call_args_list == [
         call('python setup.py sdist'),
         call('pipenv lock --requirements > docker/requirements.txt'),
-        call('docker build --no-cache --tag bb-repo:local --file docker/amd/Dockerfile docker')
+        call('docker build ' +
+             '--build-arg service_info="$(git describe) @ $(date)" ' +
+             '--no-cache --tag bb-repo:local --file docker/amd/Dockerfile docker')
     ]
 
 
@@ -89,7 +91,8 @@ def test_localbuild_all(mocked_utils, distcopy_mock, run_mock):
     assert run_mock.call_args_list == [
         call('python setup.py sdist'),
         call('pipenv lock --requirements > dk/requirements.txt'),
-        call('docker build --pull --no-cache ' +
+        call('docker build --pull ' +
+             '--build-arg service_info="$(git describe) @ $(date)" --no-cache ' +
              '--tag bb-repo:local ' +
              '--tag bb-repo:test-tag ' +
              '--tag bb-repo:feature-funky-branch ' +
@@ -99,7 +102,8 @@ def test_localbuild_all(mocked_utils, distcopy_mock, run_mock):
         call('docker push bb-repo:feature-funky-branch'),
         call('docker run --rm --privileged multiarch/qemu-user-static:register --reset ' +
              '&& ' +
-             'docker build --pull --no-cache ' +
+             'docker build --pull ' +
+             '--build-arg service_info="$(git describe) @ $(date)" --no-cache ' +
              '--tag bb-repo:rpi-local ' +
              '--tag bb-repo:rpi-test-tag ' +
              '--tag bb-repo:rpi-feature-funky-branch ' +
