@@ -112,3 +112,20 @@ def test_localbuild_all(mocked_utils, distcopy_mock, run_mock):
         call('docker push bb-repo:rpi-test-tag'),
         call('docker push bb-repo:rpi-feature-funky-branch'),
     ]
+
+
+def test_localbuild_no_setup(mocked_utils, distcopy_mock, run_mock):
+    mocked_utils['glob'].return_value = ['f1', 'f2']
+    mocked_utils['getenv'].side_effect = [
+        'bb-repo',
+    ]
+
+    localbuild.main(['--no-setup'])
+
+    assert distcopy_mock.call_count == 0
+    assert mocked_utils['remove'].call_count == 0
+    assert run_mock.call_args_list == [
+        call('docker build ' +
+             '--build-arg service_info="$(git describe) @ $(date)" ' +
+             '--no-cache --tag bb-repo:local --file docker/amd/Dockerfile docker')
+    ]

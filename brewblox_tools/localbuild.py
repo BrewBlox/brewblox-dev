@@ -40,6 +40,9 @@ def parse_args(sys_args: list = None):
                         help='Use sanitized branch name as tag. ' +
                         'ARM automatically gets the "rpi-" prefix. [%(default)s]',
                         action='store_true')
+    parser.add_argument('--no-setup',
+                        help='Skip Python-related setup steps',
+                        action='store_true')
     parser.add_argument('--pull',
                         help='Pull base images. [%(default)s]',
                         action='store_true')
@@ -67,13 +70,14 @@ def main(sys_args: list = None):
 
     tags = [re.sub('[/_:]', '-', tag) for tag in tags]
 
-    for f in glob('dist/*'):
-        remove(f)
+    if not args.no_setup:
+        for f in glob('dist/*'):
+            remove(f)
 
-    run('python setup.py sdist')
-    run(f'pipenv lock --requirements > {args.context}/requirements.txt')
-    distcopy.main(f'dist/ {args.context}/dist/'.split())
-    distcopy.main(f'config/ {args.context}/config/'.split())
+        run('python setup.py sdist')
+        run(f'pipenv lock --requirements > {args.context}/requirements.txt')
+        distcopy.main(f'dist/ {args.context}/dist/'.split())
+        distcopy.main(f'config/ {args.context}/config/'.split())
 
     for arch in args.arch:
         prefix = ''
