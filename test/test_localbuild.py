@@ -53,7 +53,6 @@ def test_localbuild_simple(mocked_utils, distcopy_mock, run_mock):
 
     assert distcopy_mock.call_args_list == [
         call('dist/ docker/dist/'.split()),
-        call('config/ docker/config/'.split()),
     ]
     assert mocked_utils['remove'].call_args_list == [
         call('f1'),
@@ -82,6 +81,7 @@ def test_localbuild_all(mocked_utils, distcopy_mock, run_mock):
                      '--pull',
                      '--context', 'dk',
                      '--file', 'df',
+                     '--distcopy', 'config',
                      ])
 
     assert distcopy_mock.call_args_list == [

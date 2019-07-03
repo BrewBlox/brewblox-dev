@@ -43,6 +43,10 @@ def parse_args(sys_args: list = None):
     parser.add_argument('--no-setup',
                         help='Skip Python-related setup steps',
                         action='store_true')
+    parser.add_argument('--distcopy',
+                        help='Additional directories',
+                        nargs='+',
+                        default=[])
     parser.add_argument('--pull',
                         help='Pull base images. [%(default)s]',
                         action='store_true')
@@ -77,7 +81,9 @@ def main(sys_args: list = None):
         run('python setup.py sdist')
         run(f'pipenv lock --requirements > {args.context}/requirements.txt')
         distcopy.main(f'dist/ {args.context}/dist/'.split())
-        distcopy.main(f'config/ {args.context}/config/'.split())
+
+    for dir in args.distcopy:
+        distcopy.main(f'{dir}/ {args.context}/{dir}/'.split())
 
     for arch in args.arch:
         prefix = ''
