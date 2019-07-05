@@ -51,7 +51,7 @@ def main(sys_args: list = None):
         check_output(f'git tag -a {new_version} -m "Version {new_version}"', shell=True)
 
         print('Latest tags:')
-        print(check_output('git tag -n1 | tail -n5', shell=True).decode().rstrip())
+        print(check_output('git tag --sort=-version:refname -n1 | head -n5', shell=True).decode().rstrip())
 
     else:
         print('Aborted. No tags were added!')
