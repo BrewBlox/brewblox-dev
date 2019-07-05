@@ -85,6 +85,10 @@ def main(sys_args: list = None):
     for dir in args.distcopy:
         distcopy.main(f'{dir}/ {args.context}/{dir}/'.split())
 
+    # single command
+    run(f'cd {args.context}'
+        ' && if [ -f ./localbuild.sh ]; then bash ./localbuild.sh; fi')
+
     for arch in args.arch:
         prefix = ''
         commands = []

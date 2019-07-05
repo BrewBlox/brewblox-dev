@@ -36,6 +36,10 @@ def run_mock(mocker):
     return mocker.patch(TESTED + '.run')
 
 
+def localbuild_sh(context):
+    return f'cd {context} && if [ -f ./localbuild.sh ]; then bash ./localbuild.sh; fi'
+
+
 def test_run(mocked_utils):
     localbuild.run('test test one two')
     mocked_utils['check_call'].assert_called_once_with(
@@ -61,6 +65,7 @@ def test_localbuild_simple(mocked_utils, distcopy_mock, run_mock):
     assert run_mock.call_args_list == [
         call('python setup.py sdist'),
         call('pipenv lock --requirements > docker/requirements.txt'),
+        call(localbuild_sh('docker')),
         call('docker build ' +
              '--build-arg service_info="$(git describe) @ $(date)" ' +
              '--no-cache --tag bb-repo:local --file docker/amd/Dockerfile docker')
@@ -91,6 +96,7 @@ def test_localbuild_all(mocked_utils, distcopy_mock, run_mock):
     assert run_mock.call_args_list == [
         call('python setup.py sdist'),
         call('pipenv lock --requirements > dk/requirements.txt'),
+        call(localbuild_sh('dk')),
         call('docker build --pull ' +
              '--build-arg service_info="$(git describe) @ $(date)" --no-cache ' +
              '--tag bb-repo:local ' +
@@ -125,6 +131,7 @@ def test_localbuild_no_setup(mocked_utils, distcopy_mock, run_mock):
     assert distcopy_mock.call_count == 0
     assert mocked_utils['remove'].call_count == 0
     assert run_mock.call_args_list == [
+        call(localbuild_sh('docker')),
         call('docker build ' +
              '--build-arg service_info="$(git describe) @ $(date)" ' +
              '--no-cache --tag bb-repo:local --file docker/amd/Dockerfile docker')
