@@ -45,6 +45,16 @@ def test_bump(check_output_mock, check_call_mock, input_mock, bump_type, new_ver
     assert input_mock.call_count == 2
 
 
+def test_init(check_output_mock, check_call_mock, input_mock):
+    check_output_mock.return_value = b'1.2.3\n3.2.1\n'
+    input_mock.return_value = 'y'
+    bump.main(['minor', '--init'])
+
+    check_output_mock.assert_any_call(f'git tag -a 0.1.0 -m "Version 0.1.0"', shell=True)
+    check_call_mock.assert_any_call('git push --tags', shell=True, stderr=STDOUT)
+    assert input_mock.call_count == 2
+
+
 def test_bump_no_push(check_output_mock, input_mock, check_call_mock):
     check_output_mock.return_value = b'1.2.3\n3.2.1\n'
     input_mock.side_effect = ['y', 'n']

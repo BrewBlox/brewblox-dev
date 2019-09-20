@@ -11,6 +11,9 @@ def parse_args(sys_args: list = None):
     argparser.add_argument('bump_type',
                            help='Component of the version number to increment.',
                            choices=['major', 'minor', 'patch'])
+    argparser.add_argument('--init',
+                           help='This will be the first tag',
+                           action='store_true')
     return argparser.parse_args(sys_args)
 
 
@@ -37,11 +40,14 @@ def main(sys_args: list = None):
     args = parse_args(sys_args)
     print(vars(args))
 
-    # Get all version-formatted tags, but use the latest
-    current_version = check_output(
-        r'git tag -l *.*.* --contains $(git rev-list --tags --max-count=1)',
-        shell=True
-    ).decode().rstrip().split('\n')[-1]
+    if args.init:
+        current_version = '0.0.0'
+    else:
+        # Get all version-formatted tags, but use the latest
+        current_version = check_output(
+            r'git tag -l *.*.* --contains $(git rev-list --tags --max-count=1)',
+            shell=True
+        ).decode().rstrip().split('\n')[-1]
 
     new_version = bump(current_version, args.bump_type)
 
