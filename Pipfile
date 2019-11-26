@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 docker = "*"
 python-dotenv = "*"
+click = "*"
 
 [dev-packages]
 pytest-sugar = "*"
