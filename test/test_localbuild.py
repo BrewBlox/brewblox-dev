@@ -78,7 +78,7 @@ def test_localbuild_all(mocked_ext):
     ).exception
 
     assert utils.distcopy.call_args_list == [
-        call('dist/', 'dk/dist/'),
+        call('dist/', ['dk/dist/']),
     ]
     assert utils.run.call_args_list == [
         call('python setup.py sdist'),

@@ -53,7 +53,7 @@ def localbuild(arch, repo, context, file, tag, branch_tag, setup, pull, push):
 
         utils.run('python setup.py sdist')
         utils.run(f'pipenv lock --requirements > {context}/requirements.txt')
-        utils.distcopy('dist/', f'{context}/dist/')
+        utils.distcopy('dist/', [f'{context}/dist/'])
 
     # single command
     utils.run(f'cd {context}'
