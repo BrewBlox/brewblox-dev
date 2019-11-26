@@ -27,6 +27,9 @@ def confirm(question):
 def distcopy(source, destinations):
 
     for dest in destinations:
+        if not dest or dest == '/':
+            raise AssertionError(f'Removing "{dest}/*" is a BAD idea, hmkay?')
+
         pathlib.Path(dest).mkdir(parents=True, exist_ok=True)
 
         for f in glob(dest + '/*'):
