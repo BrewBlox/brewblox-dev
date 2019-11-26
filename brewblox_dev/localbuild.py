@@ -17,8 +17,8 @@ def cli():
 
 
 @cli.command()
-@click.option('-a', '--arch', multiple=True, default=['amd'], type=click.Choice(['amd', 'arm']),
-              help='Build these architectures.')
+@click.option('-a', '--arch', multiple=True, type=click.Choice(['amd', 'arm']),
+              help='Build target. Can be repeated. Default: amd')
 @click.option('-r', '--repo', default=lambda: getenv('DOCKER_REPO'),
               help='Docker repository name.')
 @click.option('-c', '--context', default='docker',
@@ -29,14 +29,15 @@ def cli():
               help='Additional tag. the "local" tag is always built.')
 @click.option('--branch-tag', is_flag=True,
               help='Use sanitized branch name as tag. ARM automatically gets prefixed with "rpi-".')
-@click.option('--no-setup', is_flag=True,
-              help='Skip Python-related setup steps.')
+@click.option('--setup/--no-setup', default=True,
+              help='Perform Python-related setup steps.')
 @click.option('--pull', is_flag=True,
-              help='Pull base images')
+              help='Pull base images.')
 @click.option('--push', is_flag=True,
               help='Push all tags except "local" to Docker Hub.')
-def localbuild(arch, repo, context, file, tag, branch_tag, no_setup, pull, push):
+def localbuild(arch, repo, context, file, tag, branch_tag, setup, pull, push):
     """Build docker containers"""
+    arch = list(arch or ['amd'])
     tags = list(tag)
 
     if branch_tag:
@@ -46,7 +47,7 @@ def localbuild(arch, repo, context, file, tag, branch_tag, no_setup, pull, push)
 
     tags = [re.sub('[/_:]', '-', t) for t in tags]
 
-    if not no_setup:
+    if setup:
         for f in glob('dist/*'):
             remove(f)
 
