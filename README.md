@@ -1,5 +1,5 @@
-# brewblox-tools
+# brewblox-dev
 
 Simple utility scripts.
 
-Each script defines a python main.
+Installs the `brewblox-dev` CLI tool.

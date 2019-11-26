@@ -1,9 +1,9 @@
 from setuptools import find_packages, setup
 
 setup(
-    name='brewblox-tools',
+    name='brewblox-dev',
     use_scm_version={'local_scheme': lambda v: ''},
-    url='https://github.com/BrewBlox/brewblox-tools',
+    url='https://github.com/BrewBlox/brewblox-dev',
     author='BrewPi',
     author_email='development@brewpi.com',
     classifiers=[
@@ -17,15 +17,13 @@ setup(
     install_requires=[
         'docker',
         'python-dotenv',
+        'click',
     ],
     python_requires='>=3.6',
     setup_requires=['setuptools_scm'],
     entry_points={
         'console_scripts': [
-            'bbt-distcopy = brewblox_tools.distcopy:main',
-            'bbt-bump = brewblox_tools.bump:main',
-            'bbt-deploy-docker = brewblox_tools.deploy_docker:main',
-            'bbt-localbuild = brewblox_tools.localbuild:main',
+            'brewblox-dev = brewblox_dev.__main__:main',
         ]
     }
 )
