@@ -39,7 +39,7 @@ def test_localbuild_simple(mocked_ext):
     assert not runner.invoke(localbuild.localbuild).exception
 
     assert utils.distcopy.call_args_list == [
-        call('dist/', 'docker/dist/'),
+        call('dist/', ['docker/dist/']),
     ]
     assert mocked_ext['remove'].call_args_list == [
         call('f1'),
