@@ -15,7 +15,6 @@ setup(
     keywords='brewblox devops',
     packages=find_packages(exclude=['test']),
     install_requires=[
-        'docker',
         'python-dotenv',
         'click',
     ],
