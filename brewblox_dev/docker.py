@@ -28,6 +28,7 @@ AMD_ARM_REPOS = [
     'brewblox/brewblox-mdns',
     'brewblox/brewblox-ui',
     'brewblox/firmware-flasher',
+    'brewblox/brewblox-emitter',
 ]
 AMD_REPOS = [
     'brewblox/firmware-simulator',
