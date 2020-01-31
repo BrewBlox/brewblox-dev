@@ -1,5 +1,13 @@
 pool:
   vmImage: 'Ubuntu-16.04'
+strategy:
+  matrix:
+    Python36:
+      python.version: '3.6'
+    Python37:
+      python.version: '3.7'
+    Python38:
+      python.version: '3.8'
 
 trigger:
   tags:
@@ -21,7 +29,7 @@ steps:
 - task: UsePythonVersion@0
   inputs:
     addToPath: true
-    versionSpec: '3.8'
+    versionSpec: '$(python.version)'
     architecture: 'x64'
 
 - bash: |
