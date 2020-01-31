@@ -11,6 +11,7 @@ setup(
         'License :: OSI Approved :: GNU General Public License (GPL)',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
     keywords='brewblox devops',
     packages=find_packages(exclude=['test']),
