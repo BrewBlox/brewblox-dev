@@ -22,8 +22,8 @@ def mocked_ext(mocker):
     return {k: mocker.patch(TESTED + '.' + k) for k in mocked}
 
 
-def test_enable_experimental(mocker):
-    content = {'experimental': 'enabled'}
+def test_enable_experimental(mocker, mocked_ext):
+    content = {'experimental': True}
     mocker.patch(TESTED + '.open', mock_open(read_data=json.dumps(content)))
     docker.enable_experimental()
 

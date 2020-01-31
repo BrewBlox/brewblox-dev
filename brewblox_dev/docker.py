@@ -4,6 +4,7 @@ CLI commands for docker actions
 
 
 import json
+import tempfile
 from os import makedirs, path
 
 import click
@@ -41,20 +42,25 @@ def cli():
 
 
 def enable_experimental():
-    fname = path.expanduser('~/.docker/config.json')
+    cfg = '/etc/docker/daemon.json'
     try:
-        with open(fname, 'r') as f:
+        with open(cfg, 'r') as f:
             content = f.read()
             config = json.loads(content or '{}')
     except FileNotFoundError:  # pragma: no cover
         config = {}
 
-    if 'experimental' in config.keys():
+    if config.get('experimental'):
         return
 
-    with open(fname, 'w') as f:
-        config['experimental'] = 'enabled'
+    h, temp = tempfile.mkstemp()
+
+    with open(temp, 'w') as f:
+        config['experimental'] = True
         json.dump(config, f, indent=4)
+
+    utils.run(f'sudo mv -f {temp} {cfg}')
+    utils.run('sudo systemctl restart docker')
 
 
 def install_qemu():
