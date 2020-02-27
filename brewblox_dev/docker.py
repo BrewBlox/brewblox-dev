@@ -14,11 +14,9 @@ from brewblox_dev import utils
 WORKDIR = path.expanduser('~/.cache/brewblox-dev/docker')
 
 PYTHON_TAGS = [
-    '3.7', '3.7-slim',
     '3.8', '3.8-slim',
 ]
 NODE_TAGS = [
-    '10', '10-alpine',
     '12', '12-alpine',
 ]
 
@@ -30,6 +28,8 @@ AMD_ARM_REPOS = [
     'brewblox/brewblox-ui',
     'brewblox/firmware-flasher',
     'brewblox/brewblox-emitter',
+    'brewblox/brewblox-plaato',
+    'brewblox/brewblox-automation',
 ]
 AMD_REPOS = [
     'brewblox/firmware-simulator',
