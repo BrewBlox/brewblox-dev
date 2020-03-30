@@ -17,10 +17,13 @@ trigger:
     include:
       - refs/heads/*
 
+pr:
+  branches:
+    include:
+      - '*'
+
 variables:
   # Variables imported from brewblox group:
-  # DOCKER_USER
-  # DOCKER_PASSWORD
   # PYPI_USER
   # PYPI_PASSWORD
   - group: brewblox
@@ -40,14 +43,16 @@ steps:
   displayName: export build variables
 
 - bash: |
-    pip install pipenv
-    pipenv install --system --dev --deploy
-    pytest
+    pip install poetry
+    poetry install
+    poetry build
+  displayName: Install
+
+- bash: poetry run pytest
   displayName: Run Pytest
 
 - bash: |
     pip install twine
-    python setup.py sdist
     twine upload -u $(PYPI_USER) -p $(PYPI_PASSWORD) --skip-existing dist/*
   displayName: Deploy to PyPi
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['python.version'], '3.8'))
