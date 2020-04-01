@@ -53,4 +53,4 @@ steps:
     pip install twine
     twine upload -u $(PYPI_USER) -p $(PYPI_PASSWORD) --skip-existing dist/*
   displayName: Deploy to PyPi
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['python.version'], '3.8'))
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['python.version'], '3.7'))
