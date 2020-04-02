@@ -25,7 +25,7 @@ REPOS = [
     'brewblox-plaato',
     'brewblox-emitter',
     'brewblox-automation',
-    'brewblox-omgwtfssl',
+    'omgwtfssl',
 ]
 
 
