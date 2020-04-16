@@ -87,6 +87,11 @@ def test_delta(mocked_ext):
     assert not runner.invoke(repository.delta).exception
 
 
+def test_compare(mocked_ext):
+    runner = CliRunner()
+    assert not runner.invoke(repository.compare).exception
+
+
 def test_release_edge(mocked_ext):
     runner = CliRunner()
     assert not runner.invoke(repository.release_edge).exception

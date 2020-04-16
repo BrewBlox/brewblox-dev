@@ -95,6 +95,13 @@ def delta():
 
 
 @cli.command()
+def compare():
+    """Show GitHub comparison URLs for all managed repositories"""
+    for repo in REPOS:
+        print(f'https://github.com/BrewBlox/{repo}/compare/edge...develop')
+
+
+@cli.command()
 def release_edge():
     """Create develop -> edge PRs for all managed repositories"""
     prepare()
