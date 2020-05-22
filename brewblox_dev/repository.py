@@ -12,7 +12,6 @@ import click
 
 from brewblox_dev import utils
 
-HUB_VERSION = '2.10.0'
 WORKDIR = path.expanduser('~/.cache/brewblox-dev/git')
 REPOS = [
     'brewblox-devcon-spark',
@@ -45,15 +44,7 @@ def create_repos():
 
 
 def install_hub():
-    [
-        check_output(cmd, shell=True)
-        for cmd in [
-            f'wget https://github.com/github/hub/releases/download/v{HUB_VERSION}/hub-linux-amd64-{HUB_VERSION}.tgz',
-            f'tar zxvf hub-linux-amd64-{HUB_VERSION}.tgz',
-            f'sudo ./hub-linux-amd64-{HUB_VERSION}/install',
-            f'rm -rf hub-linux-amd64-{HUB_VERSION}*',
-        ]
-    ]
+    check_output('sudo apt-get install -y hub', shell=True)
 
 
 def prepare():

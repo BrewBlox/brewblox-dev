@@ -74,7 +74,7 @@ def test_bump_nok(mocked_ext):
 def test_install_hub(mocked_ext):
     mocked_ext['which'].return_value = False
     repository.prepare()
-    assert mocked_ext['check_output'].call_count == 4
+    mocked_ext['check_output'].assert_called_with('sudo apt-get install -y hub', shell=True)
 
 
 def test_git_info(mocked_ext):
