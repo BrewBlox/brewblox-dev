@@ -22,8 +22,8 @@ REPOS = [
     'brewblox-web-editor',
     'brewblox-firmware',
     'brewblox-plaato',
-    'brewblox-emitter',
     'brewblox-automation',
+    'deployed-images',
     'omgwtfssl',
 ]
 
