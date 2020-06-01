@@ -24,7 +24,6 @@ REPOS = [
     'brewblox-plaato',
     'brewblox-automation',
     'deployed-images',
-    'omgwtfssl',
 ]
 
 
