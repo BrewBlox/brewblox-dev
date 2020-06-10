@@ -107,7 +107,7 @@ def build_node_images():
 
 @cli.command()
 def docker_info():
-    print(f'Stash directory:', WORKDIR)
+    print('Stash directory:', WORKDIR)
     print('Python tags', *PYTHON_TAGS, sep='\n\t')
     print('Node tags', *NODE_TAGS, sep='\n\t')
     print('AMD+ARM repositories:', *AMD_ARM_REPOS, sep='\n\t')

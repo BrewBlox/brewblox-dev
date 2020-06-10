@@ -46,7 +46,7 @@ def test_init(mocked_ext):
     runner = CliRunner()
     assert not runner.invoke(repository.bump, ['minor', '--init']).exception
 
-    mocked_ext['check_output'].assert_any_call(f'git tag -a 0.1.0 -m "Version 0.1.0"', shell=True)
+    mocked_ext['check_output'].assert_any_call('git tag -a 0.1.0 -m "Version 0.1.0"', shell=True)
     mocked_ext['check_call'].assert_any_call('git push --tags', shell=True, stderr=STDOUT)
 
 
@@ -57,7 +57,7 @@ def test_bump_no_push(mocked_ext):
     runner = CliRunner()
     assert not runner.invoke(repository.bump, ['minor']).exception
 
-    mocked_ext['check_output'].assert_any_call(f'git tag -a 3.3.0 -m "Version 3.3.0"', shell=True)
+    mocked_ext['check_output'].assert_any_call('git tag -a 3.3.0 -m "Version 3.3.0"', shell=True)
     assert mocked_ext['check_call'].call_count == 0
 
 
