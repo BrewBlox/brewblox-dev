@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "brewblox-dev"
-version = "1.7.3"
+version = "1.7.4"
 description = "Brewblox development tools"
 authors = ["BrewPi <development@brewpi.com>"]
 license = "GPL-3.0"
 
 [tool.poetry.dependencies]
 python = ">=3.6"
-python-dotenv = "^0.12.0"
+python-dotenv = "^0.13.0"
 click = "^7.1.1"
 
 [tool.poetry.dev-dependencies]
