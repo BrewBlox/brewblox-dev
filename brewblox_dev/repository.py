@@ -16,7 +16,6 @@ WORKDIR = path.expanduser('~/.cache/brewblox-dev/git')
 REPOS = [
     'brewblox-devcon-spark',
     'brewblox-history',
-    'brewblox-mdns',
     'brewblox-ui',
     'brewblox-ctl-lib',
     'brewblox-web-editor',
