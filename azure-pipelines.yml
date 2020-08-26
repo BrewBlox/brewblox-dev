@@ -34,13 +34,6 @@ steps:
     architecture: 'x64'
 
 - bash: |
-    BRANCH=$(echo $(Build.SourceBranch) | grep -oP "^refs/heads/\K.*")
-    TAG=$(git describe --tags | grep "^[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]$")
-    echo "##vso[task.setvariable variable=brewblox.branch]$BRANCH"
-    echo "##vso[task.setvariable variable=brewblox.tag]$TAG"
-  displayName: export build variables
-
-- bash: |
     pip install poetry
     poetry install
     poetry build
