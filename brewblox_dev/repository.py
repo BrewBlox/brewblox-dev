@@ -14,6 +14,7 @@ from brewblox_dev import utils
 
 WORKDIR = path.expanduser('~/.cache/brewblox-dev/git')
 REPOS = [
+    'brewblox-documentation',
     'brewblox-devcon-spark',
     'brewblox-history',
     'brewblox-ui',
