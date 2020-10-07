@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "brewblox-dev"
-version = "1.7.6"
+version = "1.7.7"
 description = "Brewblox development tools"
 authors = ["BrewPi <development@brewpi.com>"]
 license = "GPL-3.0"
