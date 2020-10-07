@@ -22,6 +22,7 @@ REPOS = [
     'brewblox-firmware',
     'brewblox-plaato',
     'brewblox-automation',
+    'brewblox-hass',
     'deployed-images',
 ]
 
