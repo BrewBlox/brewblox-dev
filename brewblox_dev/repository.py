@@ -25,6 +25,7 @@ REPOS = [
     'brewblox-automation',
     'brewblox-hass',
     'deployed-images',
+    'node-red-contrib-brewblox',
 ]
 
 
