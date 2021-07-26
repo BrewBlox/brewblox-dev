@@ -22,9 +22,9 @@ REPOS = [
     'brewblox-web-editor',
     'brewblox-firmware',
     'brewblox-plaato',
-    'brewblox-automation',
+    'brewblox-tilt',
     'brewblox-hass',
-    'deployed-images',
+    'brewblox-images',
     'node-red-contrib-brewblox',
 ]
 
