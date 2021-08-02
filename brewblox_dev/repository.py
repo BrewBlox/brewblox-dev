@@ -19,7 +19,6 @@ REPOS = [
     'brewblox-history',
     'brewblox-ui',
     'brewblox-ctl-lib',
-    'brewblox-web-editor',
     'brewblox-firmware',
     'brewblox-plaato',
     'brewblox-tilt',
