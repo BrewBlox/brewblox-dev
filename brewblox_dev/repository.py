@@ -38,7 +38,7 @@ def create_repos():
     makedirs(WORKDIR, exist_ok=True)
     [
         check_output(
-            f'git clone --no-checkout --mirror https://github.com/BrewBlox/{repo}.git', shell=True, cwd=WORKDIR)
+            f'git clone --no-checkout https://github.com/BrewBlox/{repo}.git', shell=True, cwd=WORKDIR)
         for repo in REPOS
         if not path.exists(f'{WORKDIR}/{repo}/.git')
     ]
