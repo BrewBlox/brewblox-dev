@@ -1,11 +1,13 @@
 pool:
-  vmImage: 'Ubuntu-20.04'
+  vmImage: "Ubuntu-22.04"
 strategy:
   matrix:
-    Python36:
-      python.version: '3.6'
-    Python37:
-      python.version: '3.7'
+    Python38:
+      python.version: "3.8"
+    Python39:
+      python.version: "3.9"
+    Python310:
+      python.version: "3.10"
 
 trigger:
   tags:
@@ -18,7 +20,7 @@ trigger:
 pr:
   branches:
     include:
-      - '*'
+      - "*"
 
 variables:
   # Variables imported from brewblox group:
@@ -27,23 +29,25 @@ variables:
   - group: brewblox
 
 steps:
-- task: UsePythonVersion@0
-  inputs:
-    addToPath: true
-    versionSpec: '$(python.version)'
-    architecture: 'x64'
+  - task: UsePythonVersion@0
+    inputs:
+      addToPath: true
+      versionSpec: "$(python.version)"
+      architecture: "x64"
 
-- bash: |
-    pip install poetry
-    poetry install
-    poetry build
-  displayName: Install
+  - bash: |
+      pip install poetry
+      poetry install
+      poetry build -f sdist
+    displayName: Install
 
-- bash: poetry run pytest
-  displayName: Run Pytest
+  - bash: |
+      poetry run pytest
+      poetry run flake8
+    displayName: Run Pytest
 
-- bash: |
-    pip install twine
-    twine upload -u $(PYPI_USER) -p $(PYPI_PASSWORD) --skip-existing dist/*
-  displayName: Deploy to PyPi
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['python.version'], '3.7'))
+  - bash: |
+      pip install twine
+      twine upload -u $(PYPI_USER) -p $(PYPI_PASSWORD) --skip-existing dist/*
+    displayName: Deploy to PyPi
+    condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), eq(variables['python.version'], '3.8'))

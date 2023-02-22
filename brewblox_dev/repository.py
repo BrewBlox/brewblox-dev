@@ -3,10 +3,9 @@ Commands for git operations
 """
 
 from contextlib import suppress
-from distutils.version import StrictVersion
 from os import makedirs, path
 from shutil import which
-from subprocess import STDOUT, CalledProcessError, check_call, check_output
+from subprocess import CalledProcessError, check_call, check_output
 
 import click
 
@@ -19,7 +18,6 @@ REPOS = [
     'brewblox-history',
     'brewblox-ui',
     'brewblox-ctl',
-    'brewblox-ctl-lib',
     'brewblox-firmware',
     'brewblox-plaato',
     'brewblox-tilt',
@@ -44,21 +42,31 @@ def create_repos():
     ]
 
 
-def install_hub():
-    check_output('sudo apt-get install -y hub', shell=True)
+def install_gh():
+    check_output('sudo apt update', shell=True)
+    check_output('sudo apt install -y curl', shell=True)
+    check_output('curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg'
+                 + ' | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg', shell=True)
+    check_output('sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg', shell=True)
+    check_output('echo "deb [arch=$(dpkg --print-architecture)'
+                 + ' signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg]'
+                 + ' https://cli.github.com/packages stable main"'
+                 + ' | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null', shell=True)
+    check_output('sudo apt update', shell=True)
+    check_output('sudo apt install -y gh', shell=True)
 
 
 def prepare():
     create_repos()
-    if not which('hub') and utils.confirm('hub cli not found - do you want to install it?'):
-        install_hub()
+    if not which('gh') and utils.confirm('GitHub cli not found - do you want to install it?'):
+        install_gh()
 
 
 @cli.command()
 def git_info():
     print('Stash directory:', WORKDIR)
     print('Github repositories:', *REPOS, sep='\n\t')
-    check_call('hub --version', shell=True)
+    check_call('gh --version', shell=True)
 
 
 @cli.command()
@@ -66,7 +74,7 @@ def delta():
     """Show commit delta for all managed repositories"""
     prepare()
 
-    headers = ['repository'.ljust(25), 'develop >', 'edge >', 'tag']
+    headers = ['repository'.ljust(25), 'develop >', 'edge']
     print(*headers)
     # will include separators added by print()
     print('-' * len(' '.join(headers)))
@@ -78,11 +86,7 @@ def delta():
             'git rev-list --count origin/edge..origin/develop',
             shell=True,
             cwd=f'{WORKDIR}/{repo}').decode().rstrip()
-        edge_tag = check_output(
-            'git rev-list --count $(git rev-list --tags --max-count=1)..origin/edge',
-            shell=True,
-            cwd=f'{WORKDIR}/{repo}').decode().rstrip()
-        vals = [repo, dev_edge, edge_tag, '-']
+        vals = [repo, dev_edge, '-']
         print(*[v.ljust(len(headers[idx])) for idx, v in enumerate(vals)])
 
 
@@ -104,48 +108,6 @@ def release_edge():
 
         with suppress(CalledProcessError):
             check_call(
-                'hub pull-request -b edge -h develop -m "edge release"',
+                'gh pr create --title "Edge release" --base edge --head develop',
                 shell=True,
                 cwd=f'{WORKDIR}/{repo}')
-
-
-def bumped_version(current_version: str, bump_type: str) -> str:
-    major, minor, patch = StrictVersion(current_version).version
-
-    return {
-        'major': lambda: f'{major + 1}.{0}.{0}',
-        'minor': lambda: f'{major}.{minor + 1}.{0}',
-        'patch': lambda: f'{major}.{minor}.{patch + 1}',
-    }[bump_type]()
-
-
-@cli.command()
-@click.argument('increment', required=True, type=click.Choice(['major', 'minor', 'patch']))
-@click.option('--init', is_flag=True)
-def bump(increment, init):
-    """Increases git tag containing semantic version"""
-    if init:
-        current_version = '0.0.0'
-    else:
-        # Get all version-formatted tags, but use the latest
-        current_version = check_output(
-            r'git tag -l *.*.* --contains $(git rev-list --tags --max-count=1)',
-            shell=True
-        ).decode().rstrip().split('\n')[-1]
-
-    new_version = bumped_version(current_version, increment)
-
-    print(f'Bumping "{increment}" version: {current_version} ==> {new_version}')
-
-    if utils.confirm('Do you want to tag the current commit with that version?'):
-        check_output(f'git tag -a {new_version} -m "Version {new_version}"', shell=True)
-
-        print('Latest tags:')
-        print(check_output('git tag --sort=-version:refname -n1 | head -n5', shell=True).decode().rstrip())
-
-    else:
-        print('Aborted. No tags were added!')
-        return
-
-    if utils.confirm('Do you want to push this tag?'):
-        check_call('git push --tags', shell=True, stderr=STDOUT)
