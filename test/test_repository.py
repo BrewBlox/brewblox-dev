@@ -1,8 +1,6 @@
 """
-Tests bump.py
+Tests repository.py
 """
-
-from subprocess import STDOUT
 
 import pytest
 from click.testing import CliRunner

@@ -3,10 +3,9 @@ Commands for git operations
 """
 
 from contextlib import suppress
-from distutils.version import StrictVersion
 from os import makedirs, path
 from shutil import which
-from subprocess import STDOUT, CalledProcessError, check_call, check_output
+from subprocess import CalledProcessError, check_call, check_output
 
 import click
 
