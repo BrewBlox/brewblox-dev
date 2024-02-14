@@ -4,6 +4,7 @@ version = "2.1.0"
 description = "Brewblox development tools"
 authors = ["BrewPi <development@brewpi.com>"]
 license = "GPL-3.0"
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4"
