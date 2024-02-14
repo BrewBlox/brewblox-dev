@@ -16,6 +16,7 @@ pytest-mock = "*"
 flake8 = "*"
 autopep8 = "*"
 pytest = "*"
+flake8-pyproject = "*"
 
 [tool.poetry.scripts]
 brewblox-dev = 'brewblox_dev.__main__:main'
