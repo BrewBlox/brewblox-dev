@@ -19,7 +19,7 @@ REPOS = [
     'brewblox-ui',
     'brewblox-ctl',
     'brewblox-firmware',
-    'brewblox-plaato',
+    'brewblox-auth',
     'brewblox-tilt',
     'brewblox-hass',
     'brewblox-images',
@@ -108,6 +108,6 @@ def release_edge():
 
         with suppress(CalledProcessError):
             check_call(
-                'gh pr create --title "Edge release" --base edge --head develop',
+                'gh pr create --title "Edge release" --body "" --base edge --head develop',
                 shell=True,
                 cwd=f'{WORKDIR}/{repo}')
