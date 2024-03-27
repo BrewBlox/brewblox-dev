@@ -2,10 +2,9 @@
 Commands for git operations
 """
 
-from contextlib import suppress
 from os import makedirs, path
 from shutil import which
-from subprocess import CalledProcessError, check_call, check_output
+from subprocess import check_call, check_output, run
 
 import click
 
@@ -106,8 +105,6 @@ def release_edge():
         if not utils.confirm(f'Do you want to create a develop -> edge PR for {repo}?'):
             continue
 
-        with suppress(CalledProcessError):
-            check_call(
-                'gh pr create --title "Edge release" --body "" --base edge --head develop',
-                shell=True,
-                cwd=f'{WORKDIR}/{repo}')
+        run(f'gh pr create --repo BrewBlox/{repo} --title "Edge release" --body "" --base edge --head develop',
+            shell=True,
+            check=False)

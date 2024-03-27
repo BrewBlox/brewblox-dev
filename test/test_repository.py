@@ -15,6 +15,7 @@ def mocked_ext(mocker):
     mocked = [
         'check_output',
         'check_call',
+        'run',
         'makedirs',
         'path',
         'which',
@@ -47,8 +48,8 @@ def test_compare(mocked_ext):
 def test_release_edge(mocked_ext):
     runner = CliRunner()
     assert not runner.invoke(repository.release_edge).exception
-    assert mocked_ext['check_call'].call_count == len(repository.REPOS)
+    assert mocked_ext['run'].call_count == len(repository.REPOS)
 
     mocked_ext['utils'].confirm.return_value = False
     assert not runner.invoke(repository.release_edge).exception
-    assert mocked_ext['check_call'].call_count == len(repository.REPOS)
+    assert mocked_ext['run'].call_count == len(repository.REPOS)
