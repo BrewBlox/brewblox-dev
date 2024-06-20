@@ -22,6 +22,7 @@ REPOS = [
     'brewblox-tilt',
     'brewblox-hass',
     'brewblox-images',
+    'brewblox-usb-proxy',
     'node-red-contrib-brewblox',
 ]
 
